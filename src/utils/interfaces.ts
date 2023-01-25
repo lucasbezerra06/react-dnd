@@ -1,0 +1,1 @@
+export interface IItem { id: number; index: number; idContainer: string }

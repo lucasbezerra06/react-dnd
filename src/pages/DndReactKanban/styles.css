@@ -1,0 +1,7 @@
+.dnd-react-kanban-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: sans-serif;
+  text-align: center;
+}

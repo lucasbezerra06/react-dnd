@@ -1,0 +1,24 @@
+.nav-container {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 20px 0;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-container li + li {
+  border-left: 1px solid #cccccc;
+}
+
+.link-children-container {
+  text-decoration: none;
+  padding: 10px;
+  color: black;
+}

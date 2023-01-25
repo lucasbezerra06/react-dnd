@@ -1,0 +1,18 @@
+.col-container {
+  background-color: #bbbbbb;
+  border-radius: 3px;
+  max-width: 272px;
+  min-width: 272px;
+  width: 100%;
+  height: min-content;
+  min-height: 82px;
+}
+
+.col-title-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px 36px;
+}
+
+.col-content-container {
+}
