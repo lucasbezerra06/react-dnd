@@ -24,7 +24,12 @@ interface ILinkProps extends Omit<NavLinkProps, "children"> {
 function Link(props: ILinkProps) {
   let activeStyle: React.CSSProperties = {
     backgroundColor: "#4d91ff",
-    color: 'white'
+    color: "white",
+  };
+
+  let inactiveStyle: React.CSSProperties = {
+    backgroundColor: "white",
+    color: "black",
   };
 
   return (
@@ -32,7 +37,7 @@ function Link(props: ILinkProps) {
       {({ isActive }) => (
         <div
           className="link-children-container"
-          style={isActive ? activeStyle : undefined}
+          style={isActive ? activeStyle : inactiveStyle}
         >
           {props.children}
         </div>

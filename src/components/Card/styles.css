@@ -1,0 +1,23 @@
+.card-container {
+  background-color: #ffff;
+  border-radius: 3px;
+  padding: 3px;
+  padding: 0 7px 7px 7px;
+}
+.card-header {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+.card-status {
+  height: 8px;
+  width: 40px;
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+.card-content {
+  display: flex;
+  justify-content: flex-start;
+  text-align: start;
+}

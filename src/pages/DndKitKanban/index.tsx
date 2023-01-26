@@ -14,10 +14,10 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useState } from "react";
+import Card from "../../components/Card";
 import Col from "../../components/Col";
 import Droppable from "../../components/dndKit/Droppable";
 import SortableItem from "../../components/dndKit/SortableItem";
-import Item from "../../components/Item";
 import { arrayMove, insertAtIndex, removeAtIndex } from "../../utils/array";
 
 import "./styles.css";
@@ -128,7 +128,7 @@ export default function DndKitKanban() {
                       key={item}
                       isActive={activeId === item}
                     >
-                      <Item title={item.toString()} />
+                      <Card content={item.toString()} status="TO_DO" />
                     </SortableItem>
                   );
                 })}
@@ -137,7 +137,9 @@ export default function DndKitKanban() {
           );
         })}
         <DragOverlay>
-          {activeId ? <Item title={activeId.toString()} isActive /> : null}
+          {activeId ? (
+            <Card content={activeId.toString()} status="TO_DO" isActive />
+          ) : null}
         </DragOverlay>
       </div>
     </DndContext>

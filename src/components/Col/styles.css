@@ -1,5 +1,5 @@
 .col-container {
-  background-color: #bbbbbb;
+  background-color: #e5e5e5;
   border-radius: 3px;
   max-width: 272px;
   min-width: 272px;
@@ -12,7 +12,5 @@
   display: flex;
   justify-content: center;
   padding: 10px 36px;
-}
-
-.col-content-container {
+  font-weight: bold;
 }

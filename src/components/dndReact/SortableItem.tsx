@@ -9,11 +9,7 @@ interface ISortableItemProps {
   id: number;
   index: number;
   idContainer: string;
-  moveItem: (
-    dragIndex: number,
-    hoverIndex: number,
-    idContainer: string
-  ) => void;
+  moveItem: (dragId: number, hoverId: number) => void;
   isActive?: boolean;
 }
 
@@ -80,7 +76,7 @@ export default function SortableItem({
       }
 
       // Time to actually perform the action
-      moveItem(dragIndex, hoverIndex, idContainer);
+      moveItem(item.id, id);
 
       // Note: we're mutating the monitor item here!
       // Generally it's better to avoid mutations,
