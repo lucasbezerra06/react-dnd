@@ -20,7 +20,6 @@ import Col from "../../components/Col";
 import Droppable from "../../components/dndKit/Droppable";
 import SortableItem from "../../components/dndKit/SortableItem";
 import { CardStatuses, data, ICard } from "../../data";
-import { arrayMove } from "../../utils/array";
 
 import { formatColTitle } from "../../utils/format";
 import "./styles.css";
@@ -54,6 +53,7 @@ export default function DndKitKanban() {
         }
 
         // const activeContainer = active.data.current?.sortable.containerId;
+        console.log({ active, over, prevCards });
         return moveItem(active, over, prevCards);
       });
     }
@@ -68,11 +68,17 @@ export default function DndKitKanban() {
     }
   };
 
-  const moveItem = (active: Active, over: Over, items: any[]) => {
-    const oldIndex = items.indexOf(active.id);
-    const newIndex = items.indexOf(over?.id);
+  const moveItem = (active: Active, over: Over, items: ICard[]) => {
+    const oldIndex = items.findIndex((card) => card.id === active.id);
+    const newIndex = items.findIndex((card) => card.id === over?.id);
+    const item = items[oldIndex];
 
-    return arrayMove(items, oldIndex, newIndex);
+    return update(cards, {
+      $splice: [
+        [oldIndex, 1],
+        [newIndex, 0, item],
+      ],
+    });
   };
 
   const moveItemToAnotherContainer = (
