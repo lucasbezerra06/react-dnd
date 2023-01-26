@@ -7,6 +7,7 @@ import Col from "../../components/Col";
 import Droppable from "../../components/dndReact/Droppable";
 import SortableItem from "../../components/dndReact/SortableItem";
 import { CardStatus, CardStatuses, data, ICard } from "../../data";
+import { formatColTitle } from "../../utils/format";
 import { IItem } from "../../utils/interfaces";
 
 import "./styles.css";
@@ -85,8 +86,4 @@ export default function DndReactKanban() {
       <DndReactKanbanContent />
     </DndProvider>
   );
-}
-
-function formatColTitle(title: string) {
-  return title.replace("_", " ");
 }

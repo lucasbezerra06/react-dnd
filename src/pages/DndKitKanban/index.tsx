@@ -13,22 +13,27 @@ import {
   useSensors
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { useState } from "react";
+import update from "immutability-helper";
+import { useMemo, useState } from "react";
 import Card from "../../components/Card";
 import Col from "../../components/Col";
 import Droppable from "../../components/dndKit/Droppable";
 import SortableItem from "../../components/dndKit/SortableItem";
-import { arrayMove, insertAtIndex, removeAtIndex } from "../../utils/array";
+import { CardStatuses, data, ICard } from "../../data";
+import { arrayMove } from "../../utils/array";
 
+import { formatColTitle } from "../../utils/format";
 import "./styles.css";
 
 export default function DndKitKanban() {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  const [cols, setCols] = useState<Record<string, UniqueIdentifier[]>>({
-    col1: [1, 2, 3, 4],
-    col2: [5, 6, 7, 8],
-    col3: [9, 10, 11, 12],
-  });
+  const [cards, setCards] = useState(data);
+
+  const activeCard = useMemo(
+    () => cards.find((card) => card.id === activeId),
+    [cards, activeId]
+  );
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -43,16 +48,13 @@ export default function DndKitKanban() {
     }
 
     if (active.id !== over.id) {
-      setCols((cols) => {
+      setCards((prevCards) => {
         if (isItemOverAnotherContainer(active, over)) {
-          return moveItemToAnotherContainer(active, over, cols);
+          return moveItemToAnotherContainer(active, over, prevCards);
         }
 
-        const activeContainer = active.data.current?.sortable.containerId;
-        return {
-          ...cols,
-          [activeContainer]: moveItem(active, over, cols[activeContainer]),
-        };
+        // const activeContainer = active.data.current?.sortable.containerId;
+        return moveItem(active, over, prevCards);
       });
     }
     setActiveId(null);
@@ -60,11 +62,13 @@ export default function DndKitKanban() {
 
   const handleDragOver = ({ active, over }: DragOverEvent) => {
     if (isItemOverAnotherContainer(active, over)) {
-      setCols((cols) => moveItemToAnotherContainer(active, over, cols));
+      setCards((prevCards) =>
+        moveItemToAnotherContainer(active, over!, prevCards)
+      );
     }
   };
 
-  const moveItem = (active: Active, over: Over, items: UniqueIdentifier[]) => {
+  const moveItem = (active: Active, over: Over, items: any[]) => {
     const oldIndex = items.indexOf(active.id);
     const newIndex = items.indexOf(over?.id);
 
@@ -73,23 +77,19 @@ export default function DndKitKanban() {
 
   const moveItemToAnotherContainer = (
     active: Active,
-    over: Over | null,
-    cols: Record<string, UniqueIdentifier[]>
+    over: Over,
+    cards: ICard[]
   ) => {
     const overContainer = over!.data.current?.sortable.containerId || over!.id;
-    const activeContainer = active.data.current?.sortable.containerId;
+    const activeIndex = cards.findIndex((card) => card.id === active.id);
+    const overIndex = cards.findIndex((card) => card.id === over!.id);
 
-    const activeIndex = active.data.current?.sortable.index;
-    const overIndex =
-      over!.id in cols
-        ? cols[overContainer].length + 1
-        : over!.data.current?.sortable.index;
-
-    return {
-      ...cols,
-      [activeContainer]: removeAtIndex(cols[activeContainer], activeIndex),
-      [overContainer]: insertAtIndex(cols[overContainer], overIndex, active.id),
-    };
+    return update(cards, {
+      $splice: [
+        [activeIndex, 1],
+        [overIndex, 0, { ...cards[activeIndex], status: overContainer }],
+      ],
+    });
   };
 
   const isItemOverAnotherContainer = (active: Active, over: Over | null) => {
@@ -113,22 +113,22 @@ export default function DndKitKanban() {
       onDragOver={handleDragOver}
     >
       <div className="dnd-kit-kanban-container">
-        {Object.keys(cols).map((col) => {
-          const items = cols[col];
+        {CardStatuses.map((cardStatus) => {
+          const items = cards.filter((card) => card.status === cardStatus);
           return (
-            <Col title={col} key={col}>
-              <Droppable id={col} items={items}>
+            <Col title={formatColTitle(cardStatus)} key={cardStatus}>
+              <Droppable id={cardStatus} items={items}>
                 {items.map((item) => {
                   if (item == null) {
                     return null;
                   }
                   return (
                     <SortableItem
-                      id={item}
-                      key={item}
-                      isActive={activeId === item}
+                      id={item.id}
+                      key={item.id}
+                      isActive={activeId === item.id}
                     >
-                      <Card content={item.toString()} status="TO_DO" />
+                      <Card content={item.content} status={item.status} />
                     </SortableItem>
                   );
                 })}
@@ -137,8 +137,12 @@ export default function DndKitKanban() {
           );
         })}
         <DragOverlay>
-          {activeId ? (
-            <Card content={activeId.toString()} status="TO_DO" isActive />
+          {activeCard != null ? (
+            <Card
+              content={activeCard.content}
+              status={activeCard.status}
+              isActive
+            />
           ) : null}
         </DragOverlay>
       </div>
